@@ -1,0 +1,34 @@
+FROM php:8.0-fpm
+
+RUN apt-get update \
+&& apt-get  \
+    install -y \
+    apt-utils \
+    icu-devtools \
+    libicu-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libxml2-dev \
+    libzip-dev \
+    libpq-dev \
+    libfreetype6-dev \
+    procps \
+    libmemcached-dev \
+&& pecl install \
+    xdebug \
+    memcached \
+    redis \
+&& docker-php-ext-configure intl --enable-intl \
+&& docker-php-ext-configure gd --with-freetype --with-jpeg \
+&& docker-php-ext-install -j$(nproc) gd \
+&& docker-php-ext-install \
+    pdo_pgsql \
+    intl \
+    zip pcntl \
+    exif opcache \
+    sockets \
+&& docker-php-ext-enable \
+    xdebug \
+    memcached \
+    redis \
+&& docker-php-source delete

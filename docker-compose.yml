@@ -1,21 +1,101 @@
 version: '3'
 
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-13}-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
-      POSTGRES_USER: ${POSTGRES_USER:-symfony}
+  nginx:
+    image: nginx:1.20
+    restart: unless-stopped
+    ports:
+      - "80:80"
     volumes:
-      - db-data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+      - ./:/var/www/php
+      - ./.docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./.docker/nginx/log:/var/log/nginx
+    depends_on:
+      - php
+
+  php:
+    build: ./.docker/php
+    restart: unless-stopped
+    working_dir: /var/www/php
+    volumes:
+      - .:/var/www/php
+      - ./.docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    environment:
+      PHP_IDE_CONFIG: "serverName=IDE"
+
+  pgsql:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: recommendations
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_INITDB_ARGS: --auth-host=password
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@user.ru
+      PGADMIN_DEFAULT_PASSWORD: 1234
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+  mailer:
+    image: schickling/mailcatcher
+    ports:
+      - "1080:1080"
+
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: pass
+    ports:
+      - "8000:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  memcached:
+    image: memcached
+    restart: unless-stopped
+
+  redis:
+    image: redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.1.0
+    restart: always
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ELASTIC_LOGIN=user
+      - ELASTIC_PASSWORD=pass
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
 
 volumes:
-###> doctrine/doctrine-bundle ###
-  db-data:
-###< doctrine/doctrine-bundle ###
+  pg-data:
+  pgadmin-data:
+  rabbitmq_data:
+  redis_data:
+  es_data:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 192.196.0.0/16
