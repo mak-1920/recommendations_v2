@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Settings;
 
-use App\Services\ThemeManager;
+use App\Services\ThemeManager\Exceptions\UndefinedThemeException;
+use App\Services\ThemeManager\ThemeManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,16 +15,27 @@ use Symfony\Component\Routing\Annotation\Route;
 class ThemeController extends AbstractController
 {
     #[Route(
-        '/settings/theme/{theme}',
+        '{_locale<%app.locales%>}/settings/theme/{themeName}',
         name: 'settings_theme',
         methods: ['GET'],
     )]
-    /** @todo */
-    public function setTheme(string $theme, Request $request, ThemeManager $themeManager): Response
-    {
-        $response = new RedirectResponse($request->headers->get('referer'));
+    public function setTheme(
+        string $themeName,
+        Request $request,
+        ThemeManagerInterface $themeManager
+    ): Response {
+        $prevPage = $request->headers->get('referer');
+        if (is_null($prevPage)) {
+            $prevPage = $this->generateUrl('reviews');
+        }
 
-        $themeManager->setTheme($theme, $response);
+        $response = new RedirectResponse($prevPage);
+
+        try {
+            $themeManager->setTheme($themeName, $response);
+        } catch (UndefinedThemeException $e) {
+            $response->setContent($e->getMessage());
+        }
 
         return $response;
     }
