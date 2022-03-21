@@ -1,0 +1,18 @@
+{% set data = {
+    'author_id': '0',
+    'author_name': '___author_name___',
+    'author_likes': '___author_likes___',
+    'comment': {
+        'id': '___comment_id___',
+        'text': '___comment_text___',
+    }
+} %}
+
+<template id="comment-block-template">
+    <div class="comment-template d-none">
+        {% include 'comment/comment-block.html.twig' with {
+            'commentInfo': data,
+            'tpl': true,
+        }%}
+    </div>
+</template>

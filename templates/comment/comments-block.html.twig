@@ -1,0 +1,13 @@
+<div class="border border-2 bg-light p-2 container rounded-2">
+    <script type="application/json" id="comment-edit-listener">
+        {{ mercure('/review/'~reviewInfo.review.id~'/comment/{id}/{type}')|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}
+    </script>
+    {% include 'comment/comment-block-template.html.twig' %}
+    <form>
+        <textarea class="comment-text w-100 form-control" rows="3"></textarea>
+        <button class="add-comment btn btn-primary mx-auto d-block w-50">
+            {{ 'review_button_add_comment'|trans|u.title }}
+        </button>
+    </form>
+    <div class="scrolling-block comments" data-scrolling-type="comment" data-scrolling-param="{{ reviewInfo.review.id }}" data-scrolling-last-id="{{ lastId }}"></div>
+</div>

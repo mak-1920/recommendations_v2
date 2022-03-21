@@ -1,0 +1,55 @@
+{% extends 'bases/base.html.twig' %}
+
+{% set title = isCreating ? 'review_create_title'|trans|u.title : 'review_update_title'|trans|u.title %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+
+<div class="display-3 mb-2">
+    {{ title }}
+</div>
+{{ form_start(form, {'attr': { 'novalidate': 'novalidate' }}) }}
+    {{ form_errors(form) }}
+    <div class="file-uploader">
+        {{ form_row(form.illustrations_input) }}
+    </div>
+    {{ form_row(form.title) }}
+    {{ form_row(form.text) }}
+    {{ form_row(form.group) }}
+    <div class="d-none">
+        <ul class="tags"
+            data-index="{{ form.tags|length > 0 ? form.tags|last.vars.name + 1 : 0 }}" 
+            data-prototype="{{ form_widget(form.tags.vars.prototype)|e('html_attr') }}">
+            {% for tag in form.tags %}
+                {{ form_row(tag) }}
+            {% endfor %}
+        </ul>
+        <ul class="illustrations"
+            data-index="{{ form.illustrations|length > 0 ? form.illustrations|last.vars.name + 1 : 0}}"
+            data-prototype="{{ form_widget(form.illustrations.vars.prototype)|e('html_attr') }}">
+            {% for illustration in form.illustrations %}
+                {{ form_row(illustration) }}        
+            {% endfor %}
+        </ul>
+    </div>
+    {{ form_row(form.author_rating) }}
+    {{ form_row(form.tags_input) }}
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.save) }}
+        </div>
+        {% if not isCreating %}
+            <div class="col text-end">
+                <a href="{{ path('review_remove', {'id': reviewId}) }}" 
+                    class="btn btn-danger review-remove-button" 
+                    message-text="{{ 'review_remove_prompt_text'|trans|u.title }}">
+                    {{ 'review_remove_button' | trans | u.title }}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    {{ form_row(form._token) }}
+{{ form_end(form, {'render_rest': false}) }}
+
+{% endblock %}

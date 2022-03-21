@@ -1,0 +1,5 @@
+{% for commentInfo in commentsInfo %}
+    {% include 'comment/comment-block.html.twig' with {
+        'commentInfo': commentInfo,
+    } %}
+{% endfor %}

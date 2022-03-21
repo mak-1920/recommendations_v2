@@ -1,0 +1,30 @@
+{% extends 'bases/base.html.twig' %}
+
+{% block title %}{{ 'apanel'|trans|u.title }}{% endblock %}
+
+{% block body %}
+
+<div class="container bg-light pb-1 rounded-2">
+    <table class="table">
+        <thead>
+            <th>ID</th>
+            <th>{{ 'nickname'|trans|u.title }}</th>
+            <th>{{ 'Email'|trans|u.title }}</th>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <th>{{ user.id }}</th>
+                    <th>
+                        <a href="{{ path('user_page', {'id': user.id}) }}" class="link-dark">
+                            {{ user.nickname }}
+                        </a>
+                    </th>
+                    <th>{{ user.email }}</th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

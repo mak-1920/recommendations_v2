@@ -1,0 +1,37 @@
+{% extends 'bases/base.html.twig' %}
+
+{% block title %}{{ 'reviews'|trans|u.title }}{% endblock %}
+
+{% block body %}
+    {% for type in sortedType %}
+        <a href="{{ path('reviews', {type: type } ) }}" 
+            class="btn rounded-pill text-white mb-1
+                {{ (type == selectedSortType) ? 'btn-primary' : 'btn-secondary' }}">
+            {{ 'sort_by'|trans }} {{ type | trans }}
+        </a>
+    {% endfor %}
+    {% if is_granted('ROLE_USER') %}    
+        <a href="{{ path('review_create') }}"
+            class="btn rounded-pill btn-success text-white mb-1">
+            {{ 'review_edit'|trans }}
+        </a>
+    {% endif %}
+    
+    <div class="container bg-light p-2 rounded-2 border border-2 my-2">
+        <button class="btn btn-primary mx-auto d-block" data-bs-toggle="collapse"
+            data-bs-target="#tags" aria-expanded="false" aria-controls="tags">
+            {{ 'tags_show'|trans|u.title }}
+        </button>
+        <div class="collapse my-2" id="tags">
+            {% for tag in tags %}
+                <a href="{{ path('review_tag', {tagName: tag.name}) }}" 
+                    class="btn btn-primary btn-sm text-white mb-1">
+                    {{ tag.name }}    
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% block scrollingBlock %}{% endblock %}
+
+{% endblock %}

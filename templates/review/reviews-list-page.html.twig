@@ -1,0 +1,53 @@
+{% for reviewInfo in reviewsInfo %}
+    <div class="container border border-2 rounded-2 p-2 my-2 bg-light">
+        <div class="flex">
+            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and app.user.id == reviewInfo.author_id %}
+                <div class="nav-link float-end">
+                    <a href="{{ path('review_edit', {'id': reviewInfo.review.id}) }}" class="text-secondary">
+                        <i class="bi bi-gear"></i>
+                    </a>
+                </div>
+            {% endif %}
+            <div class="nav-title">
+                <div class="display-6">
+                    <a href="{{ path('review_id', {'id' : reviewInfo.review.id}) }}"
+                        class="text-black text-decoration-none">
+                        {{ reviewInfo.review.title }}
+                    </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div>
+                {{ 'review_author' | trans | u.title }}: 
+                <a href="{{ path('user_page', {'id': reviewInfo.author_id}) }}" class="link-dark">
+                    {{ reviewInfo.author_name }} ({{ reviewInfo.author_likes }})
+                </a>
+            </div>
+            <div>
+                {{ 'review_group' | trans | u.title }}: {{ reviewInfo.group | trans }}
+            </div>
+        </div>
+        <div class="p-2">
+            <div class="my-2 fs-5 text-truncate mh-10 text-wrap border bg-white p-1 rounded-2">
+                {{ reviewInfo.review.text | striptags | markdown_to_html }}
+            </div>
+            <div class="fx-5">
+                {{ 'review_tags'|trans }}: 
+                {% for tag in reviewInfo.review.tags %}
+                    <a href="{{ path('review_tag', {'tagName': tag}) }}" 
+                        class="btn btn-primary btn-sm text-white">
+                        {{ tag }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row text-secondary fs-6">
+            <div class="col text-center">
+                {{ reviewInfo.avgRating | round(2) }}/5
+            </div>
+            <div class="col text-center" title="{{ reviewInfo.review.dateOfPublication | format_datetime('medium', 'short') }}">
+                {{ reviewInfo.review.dateOfPublication | format_datetime('short', 'none') }}
+            </div>
+        </div>
+    </div>
+{% endfor %}
