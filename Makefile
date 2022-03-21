@@ -93,5 +93,5 @@ npm-run:
 	@npm run watch
 
 npm-stop:
-	@ps | grep 'npm run watch' | xargs kill -9
+	@ps -eF | grep npm | awk '{print $$ 2}' | xargs kill -9
 #<<<npm

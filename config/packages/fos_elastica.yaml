@@ -1,0 +1,29 @@
+# Read the documentation: https://github.com/FriendsOfSymfony/FOSElasticaBundle/blob/master/doc/setup.md
+fos_elastica:
+    clients:
+        default:
+            host: '%env(ELASTICSEARCH_HOST)%'
+            port: '%env(ELASTICSEARCH_PORT)%'
+            transport: '%env(ELASTICSEARCH_PROTOCOL)%'
+    indexes:
+        review:
+            persistence:
+                elastica_to_model_transformer :
+                     ignore_missing : true
+                driver: orm
+                model: App\Entity\Review\Review
+                provider: ~
+                finder: ~
+                listener: 
+                    enabled: false
+            properties:
+                title: {type: text}
+                text: {type: text}
+                comments:
+                    type: 'object'
+                    properties: 
+                        text: {type: text}
+                tags: 
+                    type: 'object'
+                    properties:
+                        name: {type: text}

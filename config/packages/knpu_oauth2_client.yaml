@@ -1,0 +1,14 @@
+knpu_oauth2_client:
+    clients:
+        google:
+            type: google
+            client_id: '%env(GOOGLE_CLIENT_ID)%'
+            client_secret: '%env(GOOGLE_CLIENT_TOKEN)%'
+            redirect_route: google_auth
+            redirect_params: {}
+        yandex:
+            type: yandex
+            client_id: '%env(YANDEX_CLIENT_ID)%'
+            client_secret: '%env(YANDEX_CLIENT_TOKEN)%'
+            redirect_route: yandex_auth
+            redirect_params: {}

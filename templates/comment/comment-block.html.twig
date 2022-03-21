@@ -1,0 +1,33 @@
+<div class="border rounded-2 fs-4 my-1 comment comment-{{ commentInfo.comment.id }}">
+    <div class="p-2 text-secondary fs-6">
+        {% if is_granted('ROLE_USER') and commentInfo.author_id == app.user.id or is_granted('ROLE_ADMIN') or tpl is defined %}
+            <div class="float-end comment-remove-block">
+                {% if tpl is defined %}
+                    <div class="user-info">
+                        <input type="hidden" value="{{ app.user.id }}" name="user-id">
+                        <input type="hidden" value="{{ is_granted('ROLE_ADMIN') }}" name="user-admin">
+                    </div>
+                {% endif %}
+                <span class="btn text-danger p-0 comment-remove-button" data-comment-id="{{ commentInfo.comment.id }}">
+                    <i class="bi bi-x-square"></i>
+                </span>
+            </div>
+        {% endif %}
+        <div class="text-start">
+            <a href="{{ path('user_page', {'id': commentInfo.author_id}) }}" class="link-secondary">
+                {{ commentInfo.author_name }} ({{ commentInfo.author_likes }})
+            </a>
+            -
+            <span class="comment-time">
+                {% if not tpl is defined %}
+                    {{ commentInfo.comment.time | format_datetime('short', 'short') }}
+                {% else %}
+                    ___comment_time___
+                {% endif %}
+            </span>
+        </div>
+    </div>
+    <div class="container p-2">
+        {{ commentInfo.comment.text }}
+    </div>
+</div>
