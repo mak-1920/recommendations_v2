@@ -14,10 +14,6 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
-    App\Services\Searcher:
-        arguments: 
-            - '@fos_elastica.finder.review'
-
     App\Services\FileStorage:
         arguments:
             - '%env(CLOUDINARY_URL)%'
@@ -47,3 +43,19 @@ services:
     App\Services\Senders\Mercure\MercureSender:
         arguments:
 ###<<<senders<<<
+
+###>>>theme-controller>>>
+    App\Controller\Settings\ThemeController:
+        arguments:
+            $themeManager: '@App\Services\ThemeManager\Cookie\TMViaCookie'
+###<<<theme-controller<<<
+
+###>>>searcher>>>
+    App\Services\Searcher\ElasticSearch\ESSearcher:
+        arguments:
+            $finder: '@fos_elastica.finder.review'
+
+    App\Controller\Search\SearchController:
+        arguments:
+            $searcher: '@App\Services\Searcher\ElasticSearch\ESSearcher'
+###<<<searcher<<<

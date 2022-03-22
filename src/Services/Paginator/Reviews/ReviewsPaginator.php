@@ -13,6 +13,8 @@ abstract class ReviewsPaginator implements PaginatorInterface
 {
     public const REVIEW_SORT_TYPES = ['relevance', 'rating'];
 
+    public const REVIEWS_ON_PAGE = 10;
+
     public function __construct(
         protected PaginatorAdapter $paginator,
         protected ReviewRepository $repository,

@@ -11,6 +11,8 @@ use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 
 class CommentPaginator implements PaginatorInterface
 {
+    public const COMMENTS_ON_PAGE = 10;
+
     public function __construct(
         protected PaginatorAdapter $paginator,
         protected CommentRepository $repository,

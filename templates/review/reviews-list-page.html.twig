@@ -34,9 +34,9 @@
             <div class="fx-5">
                 {{ 'review_tags'|trans }}: 
                 {% for tag in reviewInfo.review.tags %}
-                    <a href="{{ path('review_tag', {'tagName': tag}) }}" 
+                    <a href="{{ path('review_tag', {'tagName': tag.name}) }}"
                         class="btn btn-primary btn-sm text-white">
-                        {{ tag }}
+                        {{ tag.name }}
                     </a>
                 {% endfor %}
             </div>

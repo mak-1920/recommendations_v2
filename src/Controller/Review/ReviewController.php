@@ -196,20 +196,4 @@ class ReviewController extends AbstractController
 
         return $this->redirectToRoute('reviews');
     }
-
-    #[Route(
-        '/{_locale<%app.locales%>}/search',
-        name: 'review_search',
-        methods: ['GET'],
-    )]
-    /** @TODO */
-    public function search(Request $request, Searcher $searcher): Response
-    {
-        $query = $request->get('q') ?? '';
-
-        return $this->render('review/search.html.twig', [
-            'query' => $query,
-            'count' => $searcher->getResultCount($query),
-        ]);
-    }
 }

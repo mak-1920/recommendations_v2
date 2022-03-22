@@ -14,6 +14,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ThemeController extends AbstractController
 {
+    public function __construct(
+        private ThemeManagerInterface $themeManager,
+    )
+    {
+    }
+
     #[Route(
         '{_locale<%app.locales%>}/settings/theme/{themeName}',
         name: 'settings_theme',
@@ -22,7 +28,6 @@ class ThemeController extends AbstractController
     public function setTheme(
         string $themeName,
         Request $request,
-        ThemeManagerInterface $themeManager
     ): Response {
         $prevPage = $request->headers->get('referer');
         if (is_null($prevPage)) {
@@ -32,7 +37,7 @@ class ThemeController extends AbstractController
         $response = new RedirectResponse($prevPage);
 
         try {
-            $themeManager->setTheme($themeName, $response);
+            $this->themeManager->setTheme($themeName, $response);
         } catch (UndefinedThemeException $e) {
             $response->setContent($e->getMessage());
         }

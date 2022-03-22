@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Ajax;
+namespace App\Controller\Review\Ajax;
 
 use App\Entity\Users\User;
 use App\Services\Paginator\Comments\CommentPaginator;
@@ -16,8 +16,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CommentController extends AbstractController
 {
-    private const COMMENTS_ON_PAGE = 20;
-
     #[Route(
         '/{_locale<%app.locales%>}/ajax/comment/page',
         name: 'comment_page',
@@ -34,13 +32,13 @@ class CommentController extends AbstractController
         $lastId = $request->request->getInt('lastId');
         $page = $request->request->getInt('page');
 
-        $comments = $paginator->paginate($page, $lastId, ['reviewId' => $reviewId], self::COMMENTS_ON_PAGE);
+        $comments = $paginator->paginate($page, $lastId, ['reviewId' => $reviewId], CommentPaginator::COMMENTS_ON_PAGE);
 
         return $this->json([
             'html' => $this->render('comment/comment-page.html.twig', [
                 'commentsInfo' => $comments,
             ]),
-            'isEnd' => count($comments) < self::COMMENTS_ON_PAGE,
+            'isEnd' => count($comments) < CommentPaginator::COMMENTS_ON_PAGE,
         ]);
     }
 

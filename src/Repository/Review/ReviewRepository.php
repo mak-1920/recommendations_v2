@@ -217,23 +217,35 @@ class ReviewRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param string $entityAlias
      * @return QueryBuilder
      */
-    private function getMainQuery(): QueryBuilder
+    public function getQueryForSearch(string $entityAlias) : QueryBuilder
     {
-        return $this->createQueryBuilder('r')
-            ->select('r as review, t as tags')
+        return $this->getMainQuery($entityAlias)
+            ->addSelect($entityAlias.'.id as id')
+            ;
+    }
+
+    /**
+     * @param string $alias
+     * @return QueryBuilder
+     */
+    private function getMainQuery(string $alias = 'r'): QueryBuilder
+    {
+        return $this->createQueryBuilder($alias)
+            ->select($alias.' as review, t as tags')
             ->addSelect('a.nickname as author_name, a.id as author_id')
             ->addSelect('coalesce(avg(rait.value), 0) as avgRating')
             ->addSelect('g.name as group')
             ->addSelect('count(arl) as author_likes')
-            ->leftJoin('r.author', 'a')
+            ->leftJoin($alias.'.author', 'a')
             ->leftJoin('a.reviews', 'ar')
             ->leftJoin('ar.likes', 'arl')
-            ->leftJoin('r.reviewRatings', 'rait')
-            ->leftJoin('r.group', 'g')
-            ->leftJoin('r.tags', 't')
-            ->groupBy('r.id, a.id, g.id, t.id')
+            ->leftJoin($alias.'.reviewRatings', 'rait')
+            ->leftJoin($alias.'.group', 'g')
+            ->leftJoin($alias.'.tags', 't')
+            ->groupBy($alias.'.id, a.id, g.id, t.id')
             ;
     }
 }

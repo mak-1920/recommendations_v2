@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Ajax;
+namespace App\Controller\Review\Ajax;
 
 use App\Repository\Review\ReviewRepository;
 use App\Services\FileStorage;

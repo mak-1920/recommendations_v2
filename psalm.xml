@@ -9,6 +9,7 @@
         <PropertyNotSetInConstructor>
             <errorLevel type="suppress">
                 <directory name="src/Entity" />
+                <directory name="src/Controller" />
             </errorLevel>
         </PropertyNotSetInConstructor>
     </issueHandlers>

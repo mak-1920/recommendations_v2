@@ -4,12 +4,13 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Ajax;
+namespace App\Controller\Review\Ajax;
 
 use App\Entity\Users\User;
 use App\Services\Paginator\Reviews\AllReviewsPaginator;
 use App\Services\Paginator\Reviews\ReviewsByTagPaginator;
 use App\Services\Paginator\Reviews\ReviewsByUser;
+use App\Services\Paginator\Reviews\ReviewsPaginator;
 use App\Services\Reviews\Exceptions\ReviewException;
 use App\Services\Reviews\Score\Like;
 use App\Services\Reviews\Score\Rating;
@@ -20,8 +21,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ReviewController extends AbstractController
 {
-    private const REVIEWS_ON_PAGE = 10;
-
     #[Route(
         '/{_locale<%app.locales%>}/ajax/sortable-reviews/page',
         name: 'reviews_with_sort_page',
@@ -36,13 +35,13 @@ class ReviewController extends AbstractController
     ): Response {
         [$page, $lastId, $orderBy] = $this->getValuesFromRequest($request);
 
-        $reviews = $paginator->paginate($page, $lastId, ['orderBy' => (string) $orderBy], self::REVIEWS_ON_PAGE);
+        $reviews = $paginator->paginate($page, $lastId, ['orderBy' => (string) $orderBy], ReviewsPaginator::REVIEWS_ON_PAGE);
 
         return $this->json([
             'html' => $this->render('review/reviews-list-page.html.twig', [
                 'reviewsInfo' => $reviews,
             ]),
-            'isEnd' => count($reviews) < self::REVIEWS_ON_PAGE,
+            'isEnd' => count($reviews) < ReviewsPaginator::REVIEWS_ON_PAGE,
         ]);
     }
 
@@ -61,13 +60,13 @@ class ReviewController extends AbstractController
         [$page, $lastId, $tag] = $this->getValuesFromRequest($request);
         $tag = mb_substr($tag, 4);
 
-        $reviews = $paginator->paginate($page, $lastId, ['tag' => $tag], self::REVIEWS_ON_PAGE);
+        $reviews = $paginator->paginate($page, $lastId, ['tag' => $tag], ReviewsPaginator::REVIEWS_ON_PAGE);
 
         return $this->json([
             'html' => $this->render('review/reviews-list-page.html.twig', [
                 'reviewsInfo' => $reviews,
             ]),
-            'isEnd' => count($reviews) < self::REVIEWS_ON_PAGE,
+            'isEnd' => count($reviews) < ReviewsPaginator::REVIEWS_ON_PAGE,
         ]);
     }
 
@@ -86,13 +85,13 @@ class ReviewController extends AbstractController
         [$page, $lastId, $params] = $this->getValuesFromRequest($request);
         [$userId, $sortType] = explode(',', $params);
 
-        $reviews = $paginator->paginate($page, $lastId, ['orderBy' => $sortType, 'userId' => intval($userId)], self::REVIEWS_ON_PAGE);
+        $reviews = $paginator->paginate($page, $lastId, ['orderBy' => $sortType, 'userId' => intval($userId)], ReviewsPaginator::REVIEWS_ON_PAGE);
 
         return $this->json([
             'html' => $this->render('review/reviews-list-page.html.twig', [
                 'reviewsInfo' => $reviews,
             ]),
-            'isEnd' => count($reviews) < self::REVIEWS_ON_PAGE,
+            'isEnd' => count($reviews) < ReviewsPaginator::REVIEWS_ON_PAGE,
         ]);
     }
 
